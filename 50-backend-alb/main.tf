@@ -1,48 +1,34 @@
 module "backend_alb" {
-  source = "terraform-aws-modules/alb/aws"
+  source                     = "terraform-aws-modules/alb/aws"
+  version                    = "9.16.0"                                        # as we used open source, they are using this version lastest
+  internal                   = true                                            # false if load balancer is public/internal
+  name                       = "${var.project}-${var.environment}-backend-alb" #roboshop-dev-backend-alb
+  vpc_id                     = local.vpc_id
+  subnets                    = local.private_subnet_ids # as we need to created this alb in private subnet
+  create_security_group      = false                    # as we have created our sg for backend_alb
+  security_groups            = [local.backend_alb_sg_id]
+  enable_deletion_protection = false # to avoid  cannot be deleted because deletion protection is enabled
 
-  name                  = "${var.project}-${var.environment}-bakend-alb" #roboshop-dev-backend-alb
-  vpc_id                = local.vpc_id
-  subnets               = local.private_subnet_ids # as we need to created this alb in private subnet
-  create_security_group = false                    # as we have created our sg for backend_alb
-  security_groups       = [local.backend_alb_sg_id]
 
-  access_logs = {
-    bucket = "my-alb-logs"
-  }
-
-  listeners = {
-    ex-http-https-redirect = {
-      port     = 80
-      protocol = "HTTP"
-      redirect = {
-        port        = "443"
-        protocol    = "HTTPS"
-        status_code = "HTTP_301"
-      }
+  tags = merge(local.common_tags,
+    {
+      Name = "${var.project}-${var.environment}-backend-alb"
     }
-    ex-https = {
-      port            = 443
-      protocol        = "HTTPS"
-      certificate_arn = "arn:aws:iam::123456789012:server-certificate/test_cert-123456789012"
+  )
+}
 
-      forward = {
-        target_group_key = "ex-instance"
-      }
+#gives fixed output without target group
+resource "aws_alb_listener" "backend_alb" {
+  load_balancer_arn = module.backend_alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "<h1> Hello, I am Fixed Response Content from listener (backend ALB) </h1>"
+      status_code  = "200"
     }
-  }
-
-  target_groups = {
-    ex-instance = {
-      name_prefix = "h1"
-      protocol    = "HTTP"
-      port        = 80
-      target_type = "instance"
-    }
-  }
-
-  tags = {
-    Environment = "Development"
-    Project     = "Example"
   }
 }

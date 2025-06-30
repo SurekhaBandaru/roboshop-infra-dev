@@ -18,3 +18,9 @@ resource "aws_ssm_parameter" "backend_alb_sg_id" {
   value = module.backend_alb.sg_id
 }
 
+resource "aws_ssm_parameter" "vpn_sg_id" {
+  name  = "/${var.project}/${var.environment}/vpn_sg_id"
+  type  = "String"
+  value = module.vpn.sg_id
+}
+
