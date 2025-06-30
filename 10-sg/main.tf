@@ -104,7 +104,102 @@ resource "aws_security_group_rule" "backend_vpn" {
   type                     = "ingress" # as admin logins from internet
   from_port                = 80
   to_port                  = 80
-  protocol                 = "tcp"
+  protocol                 = "tcp"            #http
   source_security_group_id = module.vpn.sg_id # here, traffic source is vpn, so need to add vpn sg's id here, as we have seen in the class, if one instance to connct with the second, in the second instance's sg, we added first instances sg_id on port 80
   security_group_id        = module.backend_alb.sg_id
+}
+
+#security group for mongodb
+module "mongodb" {
+  source         = "git::https://github.com/SurekhaBandaru/terraform-aws-securitygroup.git?ref=main"
+  project        = var.project
+  environment    = var.environment
+  sg_name        = var.mongodb_sg_name
+  sg_description = var.mongodb_sg_description
+  vpc_id         = local.vpc_id
+
+}
+
+
+#security group for redis
+module "redis" {
+  source         = "git::https://github.com/SurekhaBandaru/terraform-aws-securitygroup.git?ref=main"
+  project        = var.project
+  environment    = var.environment
+  sg_name        = var.redis_sg_name
+  sg_description = var.redis_sg_description
+  vpc_id         = local.vpc_id
+
+}
+
+#security group for mysql
+module "mysql" {
+  source         = "git::https://github.com/SurekhaBandaru/terraform-aws-securitygroup.git?ref=main"
+  project        = var.project
+  environment    = var.environment
+  sg_name        = var.mysql_sg_name
+  sg_description = var.mysql_sg_description
+  vpc_id         = local.vpc_id
+
+}
+
+#security group for rabbitMq
+module "rabbitmq" {
+  source         = "git::https://github.com/SurekhaBandaru/terraform-aws-securitygroup.git?ref=main"
+  project        = var.project
+  environment    = var.environment
+  sg_name        = var.rabbitmq_sg_name
+  sg_description = var.rabbitmq_sg_description
+  vpc_id         = local.vpc_id
+
+}
+
+#mongodb to allow connections from vpn on port no 22 and 27017 (for testing)
+resource "aws_security_group_rule" "mongodb_vpn" {
+  count                    = length(var.mongodb_vpn_ports)
+  type                     = "ingress"
+  from_port                = var.mongodb_vpn_ports[count.index]
+  to_port                  = var.mongodb_vpn_ports[count.index]
+  protocol                 = "tcp"            #ssh
+  source_security_group_id = module.vpn.sg_id # connection coming from vpn
+  security_group_id        = module.mongodb.sg_id
+
+}
+
+#redis to allow connections from vpn on port 22, 6379
+
+resource "aws_security_group_rule" "redis_vpn" {
+  count                    = length(var.redis_vpn_ports)
+  type                     = "ingress"
+  from_port                = var.redis_vpn_ports[count.index]
+  to_port                  = var.redis_vpn_ports[count.index]
+  protocol                 = "tcp"            #ssh
+  source_security_group_id = module.vpn.sg_id # connection coming from vpn
+  security_group_id        = module.redis.sg_id
+
+}
+
+# mysql to allow connections from vpn on port 22, 3306
+
+resource "aws_security_group_rule" "mysql_vpn" {
+  count                    = length(var.mysql_vpn_ports)
+  type                     = "ingress"
+  from_port                = var.mysql_vpn_ports[count.index]
+  to_port                  = var.mysql_vpn_ports[count.index]
+  protocol                 = "tcp"            #ssh
+  source_security_group_id = module.vpn.sg_id # connection coming from vpn
+  security_group_id        = module.mysql.sg_id
+
+}
+
+#rabbitmq to allow connections from vpn to port 22, 5672
+resource "aws_security_group_rule" "rabbitmq_vpn" {
+  count                    = length(var.rabbitmq_vpn_ports)
+  type                     = "ingress"
+  from_port                = var.rabbitmq_vpn_ports[count.index]
+  to_port                  = var.rabbitmq_vpn_ports[count.index]
+  protocol                 = "tcp"            #ssh
+  source_security_group_id = module.vpn.sg_id # connection coming from vpn
+  security_group_id        = module.rabbitmq.sg_id
+
 }
