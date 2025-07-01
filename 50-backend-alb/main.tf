@@ -32,3 +32,22 @@ resource "aws_alb_listener" "backend_alb" {
     }
   }
 }
+
+#here it is difficult to remember dns created in alb, we can create it route 53 record as shown
+
+resource "aws_route53_record" "backend_alb" {
+
+  zone_id = var.route53_zone_id
+  name    = "*.backend-dev.${var.route53_zone_id}"
+  type    = "A"
+  alias {
+    name                   = module.backend_alb.dns_name
+    zone_id                = module.backend_alb.zone_id # zone id of alb
+    evaluate_target_health = true
+  }
+
+}
+
+
+
+

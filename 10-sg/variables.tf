@@ -88,3 +88,11 @@ variable "rabbitmq_sg_name" {
 variable "rabbitmq_sg_description" {
   default = "Created sg for rabbitmq instance"
 }
+
+variable "catalogue_sg_description" {
+  default = "Created sg for catalogue instance"
+}
+
+variable "catalogue_sg_name" {
+  default = "catalogue"
+}

@@ -81,6 +81,7 @@ resource "terraform_data" "redis" {
 resource "aws_instance" "mysql" {
   ami                    = local.ami_id
   instance_type          = "t3.micro"
+  iam_instance_profile   = "EC2RoleToFetchSSMParams" # as we were facing isssues to fetch mysql root pwd from ssm parameter store, to resolve this we created a I AM role manually for now, and attching to our mysql instance here
   vpc_security_group_ids = [local.mysql_sg_id]
   subnet_id              = local.database_subnet_id
   tags = merge(
