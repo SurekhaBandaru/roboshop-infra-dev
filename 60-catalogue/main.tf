@@ -1,6 +1,6 @@
 #create target group to put catalogue instance
 resource "aws_lb_target_group" "catalogue" {
-  name     = "${var.project}-${var.environment}-catalouge"
+  name     = "${var.project}-${var.environment}-catalogue"
   port     = 8080
   protocol = "HTTP"
   vpc_id   = local.vpc_id
@@ -28,4 +28,32 @@ resource "aws_instance" "catalogue" {
       Name = "${var.project}-${var.environment}-catalogue"
     }
   )
+}
+
+
+#triggers automatically when aws instance created triggers_replace
+resource "terraform_data" "catalogue" {
+  triggers_replace = [
+    aws_instance.catalogue.id
+  ]
+
+  provisioner "file" {
+    source      = "catalogue.sh"
+    destination = "/tmp/catalogue.sh"
+  }
+
+  connection {
+    type     = "ssh"
+    user     = "ec2-user"
+    password = "DevOps321"
+    host     = aws_instance.catalogue.private_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/catalogue.sh",
+      "sudo sh /tmp/catalogue.sh catalogue"
+    ]
+  }
+
 }
