@@ -45,6 +45,7 @@ resource "aws_route53_record" "backend_alb" {
     zone_id                = module.backend_alb.zone_id # zone id of alb
     evaluate_target_health = true
   }
+  allow_overwrite = true
 
 }
 
