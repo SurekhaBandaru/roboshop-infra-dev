@@ -38,7 +38,7 @@ resource "aws_alb_listener" "backend_alb" {
 resource "aws_route53_record" "backend_alb" {
 
   zone_id = var.route53_zone_id
-  name    = "*.backend-dev.${var.route53_zone_id}"
+  name    = "*.backend-dev.${var.route53_zone_name}"
   type    = "A"
   alias {
     name                   = module.backend_alb.dns_name

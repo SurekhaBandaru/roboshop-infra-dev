@@ -30,6 +30,14 @@ variable "backend_alb_sg_description" {
   default = "Created sg for backend alb instance"
 }
 
+variable "frontend_alb_sg_name" {
+  default = "frontend_alb"
+}
+
+variable "frontend_alb_sg_description" {
+  default = "Created sg for frontend alb instance"
+}
+
 variable "vpn_sg_name" {
   default = "vpn"
 }
@@ -54,13 +62,19 @@ variable "redis_vpn_ports" {
   default = ["22", "6379"]
 }
 
-variable "mysql_vpn_ports" {
+variable "redis_bastion_ports" {
+  default = ["22", "6379"]
+}
+
+variable "mysql_vpn_bastion_ports" {
   default = ["22", "3306"]
 }
 
-variable "rabbitmq_vpn_ports" {
+
+variable "rabbitmq_vpn_bastion_ports" {
   default = ["22", "5679"]
 }
+
 
 variable "redis_sg_name" {
   default = "redis"
@@ -95,4 +109,65 @@ variable "catalogue_sg_description" {
 
 variable "catalogue_sg_name" {
   default = "catalogue"
+}
+
+variable "user_sg_name" {
+  default = "user"
+
+}
+
+variable "user_sg_description" {
+  default = "Created sg for user instance"
+}
+
+variable "cart_sg_name" {
+  default = "cart"
+
+}
+
+variable "cart_sg_description" {
+  default = "Created sg for cart instance"
+}
+
+variable "shipping_sg_name" {
+  default = "shipping"
+
+}
+
+variable "shipping_sg_description" {
+  default = "Created sg for shipping instance"
+}
+
+variable "payment_sg_name" {
+  default = "payment"
+
+}
+
+variable "payment_sg_description" {
+  default = "Created sg for payment instance"
+}
+
+variable "frontend_sg_name" {
+  default = "frontend"
+
+}
+
+variable "frontend_sg_description" {
+  default = "Created sg for frontend instance"
+}
+
+variable "user_sg_name" {
+  default = "user"
+}
+
+variable "user_sg_description" {
+  default = "Created sg for user instance"
+}
+
+variable "vpn_ports" {
+  default = ["22", "8080"]
+}
+
+variable "bastion_ports" {
+  default = ["22", "8080"]
 }

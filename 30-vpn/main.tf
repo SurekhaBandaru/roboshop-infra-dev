@@ -18,3 +18,15 @@ resource "aws_instance" "vpn" { #we used open vpn ami in aws when creating manua
 
   })
 }
+
+
+#as vpn's ip address gets changed everytime when restarted/recreated, we can create a route 53 record
+resource "aws_route53_record" "vpn" {
+  zone_id         = var.route53_zone_id
+  name            = "vpn-${var.environment}.${var.route53_zone_name}" #vpn-dev.devopspract.site
+  type            = "A"
+  ttl             = 1
+  records         = [aws_instance.vpn.public_ip]
+  allow_overwrite = true
+
+}
