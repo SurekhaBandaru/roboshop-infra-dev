@@ -1,4 +1,4 @@
-resource "aws_ssm_parameter" "sg_id" {
+resource "aws_ssm_parameter" "frontend_sg_id" {
   name  = "/${var.project}/${var.environment}/frontend_sg_id"
   type  = "String"
   value = module.frontend.sg_id # module.frontend is from this folder and sg_id is from output of terraform-aws-securitygroup
@@ -80,12 +80,6 @@ resource "aws_ssm_parameter" "payment_sg_id" {
   name  = "/${var.project}/${var.environment}/payment_sg_id"
   type  = "String"
   value = module.payment.sg_id
-}
-
-resource "aws_ssm_parameter" "frontend_sg_id" {
-  name  = "/${var.project}/${var.environment}/frontend_sg_id"
-  type  = "String"
-  value = module.frontend.sg_id
 }
 
 resource "aws_ssm_parameter" "frontend_alb_sg_id" {

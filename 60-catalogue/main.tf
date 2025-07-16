@@ -135,7 +135,7 @@ resource "aws_launch_template" "catalogue" {
 
 #autoscaling group - refresh all instance once this ASG is updated
 
-resource "aws_autoscaling_group" "example" {
+resource "aws_autoscaling_group" "catalogue" {
   name             = "${var.project}-${var.environment}-catalogue"
   desired_capacity = 1  #our wish, here I want one instance to be running at a time
   max_size         = 10 #I want to increase no of instances size to 10 if traffic increases
@@ -145,7 +145,7 @@ resource "aws_autoscaling_group" "example" {
   health_check_type         = "ELB" #elastic load balancer
 
   target_group_arns   = [aws_lb_target_group.catalogue.arn] # launch/psh instances into target group from ASG
-  vpc_zone_identifier = [local.private_subnet_ids]
+  vpc_zone_identifier = local.private_subnet_ids            #already we are calling list, so need to mention like []
 
 
   launch_template {
@@ -161,7 +161,7 @@ resource "aws_autoscaling_group" "example" {
     content {
       key                 = tag.key
       value               = tag.value
-      propagate_at_launch = aws_launch_template.catalogue.id
+      propagate_at_launch = true
     }
 
   }
@@ -171,7 +171,7 @@ resource "aws_autoscaling_group" "example" {
     preferences {
       min_healthy_percentage = 50
     }
-    triggers = ["launch_template"] #once launch template changes, ASG will retrigger and takes new lauch template, delete old instances and roll on new instances
+    triggers = ["launch_template"] #once launch template changes, ASG will retrigger and takes new lauch template, delete old instances and roll out new instances
   }
 
   timeouts {
@@ -187,7 +187,7 @@ resource "aws_autoscaling_policy" "catalogue" {
   name                   = "${var.project}-${var.environment}-catalogue"
   autoscaling_group_name = aws_autoscaling_group.catalogue.name
   policy_type            = "TargetTrackingScaling" # track the target and scale
-  cooldown               = 120                     #collect cpu metrics after 120 sec
+  #cooldown               = 120                     #collect cpu metrics after 120 sec │ Error: cooldown is only supported for policy type SimpleScaling
   target_tracking_configuration {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"

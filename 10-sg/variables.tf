@@ -147,22 +147,6 @@ variable "payment_sg_description" {
   default = "Created sg for payment instance"
 }
 
-variable "frontend_sg_name" {
-  default = "frontend"
-
-}
-
-variable "frontend_sg_description" {
-  default = "Created sg for frontend instance"
-}
-
-variable "user_sg_name" {
-  default = "user"
-}
-
-variable "user_sg_description" {
-  default = "Created sg for user instance"
-}
 
 variable "vpn_ports" {
   default = ["22", "8080"]

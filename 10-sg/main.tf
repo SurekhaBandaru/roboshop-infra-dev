@@ -70,7 +70,7 @@ module "cart" {
   project        = var.project
   environment    = var.environment
   sg_name        = var.cart_sg_name
-  sg_description = var.cart.sg_description
+  sg_description = var.cart_sg_description
   vpc_id         = local.vpc_id
 }
 
@@ -206,7 +206,7 @@ resource "aws_security_group_rule" "vpn_1194" {
 }
 
 #add rule for backend ALB accepting connections from VPN on port no 80
-resource "aws_security_group_rule" "backend_vpn" {
+resource "aws_security_group_rule" "backend_alb_vpn" {
   type                     = "ingress" # as admin logins from internet
   from_port                = 80
   to_port                  = 80
@@ -236,7 +236,7 @@ resource "aws_security_group_rule" "mongodb_bastion" {
   to_port                  = var.mongodb_vpn_ports[count.index]
   protocol                 = "tcp"
   source_security_group_id = module.bastion.sg_id
-  security_group_id        = module.module.sg_id
+  security_group_id        = module.mongodb.sg_id
 }
 
 
@@ -431,7 +431,7 @@ resource "aws_security_group_rule" "user_vpn" {
   to_port                  = var.vpn_ports[count.index]
   protocol                 = "tcp"
   source_security_group_id = module.vpn.sg_id
-  security_group_id        = module.user.sg_ids
+  security_group_id        = module.user.sg_id
 }
 
 #user to allow 22 from bastion
@@ -534,7 +534,7 @@ resource "aws_security_group_rule" "payment_vpn" {
   to_port                  = var.vpn_ports[count.index]
   protocol                 = "tcp"
   source_security_group_id = module.vpn.sg_id
-  security_group_id        = module.payment[count.index]
+  security_group_id        = module.payment.sg_id
 }
 
 #payment to allow 22, 8080 from bastion
@@ -570,16 +570,6 @@ resource "aws_security_group_rule" "backend_alb_frontend" {
   security_group_id        = module.backend_alb.sg_id
 }
 
-#backend alb to allow connections from vpn 80
-resource "aws_security_group_rule" "backend_alb_vpn" {
-  type                     = "ingress"
-  from_port                = 80
-  to_port                  = 80
-  protocol                 = "tcp"
-  source_security_group_id = module.vpn.sg_id
-  security_group_id        = module.backend_alb.sg_id
-}
-
 #backend_alb to allow connections from user on 80
 resource "aws_security_group_rule" "backend_alb_user" {
   type                     = "ingress"
@@ -611,13 +601,13 @@ resource "aws_security_group_rule" "backend_alb_shipping" {
 }
 
 #backend_alb to allow connections from payment on 80
-resource "aws_security_group_rule" "backend_alb_payement" {
+resource "aws_security_group_rule" "backend_alb_payment" {
   type                     = "ingress"
   from_port                = 80
   to_port                  = 80
   protocol                 = "tcp"
-  source_security_group_id = module.payment.sg_id
-  security_group_id        = module.payment.g_id
+  source_security_group_id = module.backend_alb.sg_id
+  security_group_id        = module.payment.sg_id
 }
 
 #front end to allow 22 from vpn
@@ -627,7 +617,7 @@ resource "aws_security_group_rule" "frontend_vpn" {
   to_port                  = 22
   protocol                 = "tcp"
   source_security_group_id = module.vpn.sg_id
-  security_group_id        = module.frontend_sg_id
+  security_group_id        = module.frontend.sg_id
 }
 
 #frontend to allow 22 from bastion
@@ -651,24 +641,24 @@ resource "aws_security_group_rule" "frontend_frontend_alb" {
   security_group_id        = module.frontend.sg_id
 }
 
-#frontend_alb to allow 80 http from internet
+#frontend_alb to allow 80 http from internet # we dont need this because we allow 443-https only from internet
 resource "aws_security_group_rule" "frontend_alb_http" {
   type              = "ingress"
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0./0"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = module.frontend_alb.sg_id
 }
 
 #frontend_alb to allow 443 https from internet
 
-resource "aws_security_group_rule" "fronend_alb_https" {
+resource "aws_security_group_rule" "frontend_alb_https" {
   type              = "ingress"
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/16"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = module.frontend_alb.sg_id
 }
 

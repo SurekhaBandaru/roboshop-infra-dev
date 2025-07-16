@@ -1,10 +1,10 @@
 data "aws_ami" "openvpn" {
 
-  owners      = ["679593333241"]
+  owners      = ["679593333241"] # 805124255081
   most_recent = true
   filter {
     name   = "name"
-    values = ["OpenVPN Access Server Community Image-8fbe3379-*"]
+    values = ["OpenVPN Access Server Community Image-8fbe3379-*"] #OpenVPN Access Server Community Image-fe8020db-5343-4c43-9e65-5ed4a825c931
   }
 
   filter {
@@ -17,7 +17,8 @@ data "aws_ami" "openvpn" {
     values = ["hvm"]
   }
 }
-#ami-015bde79b8dffa19b
+#ami-015bde79b8dffa19b # facing some issue, so reverted to it
+#ami-06e5a963b2dadea6f latest - unsubsribed first one and created another, so details got change
 
 
 data "aws_ssm_parameter" "vpn_sg_id" {
