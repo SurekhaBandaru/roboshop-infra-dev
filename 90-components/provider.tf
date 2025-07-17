@@ -8,7 +8,7 @@ terraform {
 
   backend "s3" {
     bucket = "84s-tf-remote-state-dev"
-    key    = "roboshop-dev-frontend-alb" #any string
+    key    = "roboshop-dev-component" #any string
     region = "us-east-1"
     #dynamodb_table = "84s-tf-remote-state" # as we enabled native s3 locking, we dont need this, this is deprecated
     encrypt      = true #if anybody opens file, it will be encrypted

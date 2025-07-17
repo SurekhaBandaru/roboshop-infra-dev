@@ -1,6 +1,6 @@
 #create https certificate from amazon vendor
-resource "aws_acm_crtificate" "devopspract" {
-  domain_name       = "*.{var.route53_zone_name}"
+resource "aws_acm_certificate" "devopspract" {
+  domain_name       = "*.${var.route53_zone_name}"
   validation_method = "DNS"
   tags = merge(local.common_tags,
     {
@@ -16,10 +16,10 @@ resource "aws_acm_crtificate" "devopspract" {
 resource "aws_route53_record" "devopspract" {
   #take required info from the certificate
   for_each = {
-    for dvo in aws_acm_crtificate.devopspract.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.devopspract.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
-      record = dvo.resource.record_value
-      type   = dvo.resource.record_types
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
     }
   }
   allow_overwrite = true
@@ -33,8 +33,8 @@ resource "aws_route53_record" "devopspract" {
 #click validate button
 #validate the records created in aws_route53 for the certificate
 resource "aws_acm_certificate_validation" "devopspract" {
-  certificate_arn         = aws_acm_crtificate.devopspract.arn
-  validation_record_fqdns = [for record in aws_aws_route53_record.devopspract : record.fqdn]
+  certificate_arn         = aws_acm_certificate.devopspract.arn
+  validation_record_fqdns = [for record in aws_route53_record.devopspract : record.fqdn]
 }
 
 

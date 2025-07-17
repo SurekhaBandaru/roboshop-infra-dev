@@ -1,11 +1,11 @@
-module "fronend_alb" {
+module "frontend_alb" {
   source                     = "terraform-aws-modules/alb/aws"
   version                    = "9.16.0"                                         # as we used open source, they are using this version lastest
   internal                   = false                                            # false if load balancer is public
-  name                       = "${var.project}-${var.environment}-frontend-alb" #roboshop-dev-backend-alb
+  name                       = "${var.project}-${var.environment}-frontend-alb" #roboshop-dev-frontend-alb
   vpc_id                     = local.vpc_id
   subnets                    = local.public_subnet_ids # as we need to created this alb in public subnets
-  create_security_group      = false                   # as we have created our sg for backend_alb
+  create_security_group      = false                   # as we have created our sg for frotend_alb
   security_groups            = [local.frontend_alb_sg_id]
   enable_deletion_protection = false # to avoid  cannot be deleted because deletion protection is enabled
 
@@ -37,14 +37,14 @@ resource "aws_alb_listener" "frontend_alb" {
 
 #here it is difficult to remember dns created in alb, we can create it route 53 record as shown
 
-resource "aws_route53_record" "backend_alb" {
+resource "aws_route53_record" "frontend_alb" {
 
   zone_id = var.route53_zone_id
   name    = "*.${var.route53_zone_name}" #*.devopspract.site
   type    = "A"
   alias {
-    name                   = module.backend_alb.dns_name
-    zone_id                = module.backend_alb.zone_id # zone id of alb
+    name                   = module.frontend_alb.dns_name
+    zone_id                = module.frontend_alb.zone_id # zone id of alb
     evaluate_target_health = true
   }
   allow_overwrite = true
