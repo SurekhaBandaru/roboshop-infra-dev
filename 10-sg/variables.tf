@@ -54,24 +54,20 @@ variable "mongodb_sg_description" {
   default = "Created sg for mongodb instance"
 }
 
-variable "mongodb_vpn_ports" {
+variable "mongodb_ports" {
   default = ["22", "27017"]
 }
 
-variable "redis_vpn_ports" {
+variable "redis_ports" {
   default = ["22", "6379"]
 }
 
-variable "redis_bastion_ports" {
-  default = ["22", "6379"]
-}
-
-variable "mysql_vpn_bastion_ports" {
+variable "mysql_ports" {
   default = ["22", "3306"]
 }
 
 
-variable "rabbitmq_vpn_bastion_ports" {
+variable "rabbitmq_ports" {
   default = ["22", "5679"]
 }
 

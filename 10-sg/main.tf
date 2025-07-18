@@ -218,10 +218,10 @@ resource "aws_security_group_rule" "backend_alb_vpn" {
 
 #mongodb to allow connections from vpn on port no 22 and 27017 (for testing)
 resource "aws_security_group_rule" "mongodb_vpn" {
-  count                    = length(var.mongodb_vpn_ports)
+  count                    = length(var.mongodb_ports)
   type                     = "ingress"
-  from_port                = var.mongodb_vpn_ports[count.index]
-  to_port                  = var.mongodb_vpn_ports[count.index]
+  from_port                = var.mongodb_ports[count.index]
+  to_port                  = var.mongodb_ports[count.index]
   protocol                 = "tcp"            #ssh
   source_security_group_id = module.vpn.sg_id # connection coming from vpn
   security_group_id        = module.mongodb.sg_id
@@ -230,10 +230,10 @@ resource "aws_security_group_rule" "mongodb_vpn" {
 
 #mongodb to allow connections from bastion on port 22 and 27017
 resource "aws_security_group_rule" "mongodb_bastion" {
-  count                    = length(var.mongodb_vpn_ports)
+  count                    = length(var.mongodb_ports)
   type                     = "ingress"
-  from_port                = var.mongodb_vpn_ports[count.index]
-  to_port                  = var.mongodb_vpn_ports[count.index]
+  from_port                = var.mongodb_ports[count.index]
+  to_port                  = var.mongodb_ports[count.index]
   protocol                 = "tcp"
   source_security_group_id = module.bastion.sg_id
   security_group_id        = module.mongodb.sg_id
@@ -243,10 +243,10 @@ resource "aws_security_group_rule" "mongodb_bastion" {
 #redis to allow connections from vpn on port 22, 6379
 
 resource "aws_security_group_rule" "redis_vpn" {
-  count                    = length(var.redis_vpn_ports)
+  count                    = length(var.redis_ports)
   type                     = "ingress"
-  from_port                = var.redis_vpn_ports[count.index]
-  to_port                  = var.redis_vpn_ports[count.index]
+  from_port                = var.redis_ports[count.index]
+  to_port                  = var.redis_ports[count.index]
   protocol                 = "tcp"            #ssh
   source_security_group_id = module.vpn.sg_id # connection coming from vpn
   security_group_id        = module.redis.sg_id
@@ -255,10 +255,10 @@ resource "aws_security_group_rule" "redis_vpn" {
 
 #redis to allow connections from bastion on 22, 6379
 resource "aws_security_group_rule" "redis_bastion" {
-  count                    = length(var.redis_bastion_ports)
+  count                    = length(var.redis_ports)
   type                     = "ingress"
-  from_port                = var.redis_bastion_ports[count.index]
-  to_port                  = var.redis_bastion_ports[count.index]
+  from_port                = var.redis_ports[count.index]
+  to_port                  = var.redis_ports[count.index]
   protocol                 = "tcp"
   source_security_group_id = module.bastion.sg_id
   security_group_id        = module.redis.sg_id
@@ -287,10 +287,10 @@ resource "aws_security_group_rule" "redis_cart" {
 # mysql to allow connections from vpn on port 22, 3306
 
 resource "aws_security_group_rule" "mysql_vpn" {
-  count                    = length(var.mysql_vpn_bastion_ports)
+  count                    = length(var.mysql_ports)
   type                     = "ingress"
-  from_port                = var.mysql_vpn_bastion_ports[count.index]
-  to_port                  = var.mysql_vpn_bastion_ports[count.index]
+  from_port                = var.mysql_ports[count.index]
+  to_port                  = var.mysql_ports[count.index]
   protocol                 = "tcp"            #ssh
   source_security_group_id = module.vpn.sg_id # connection coming from vpn
   security_group_id        = module.mysql.sg_id
@@ -299,10 +299,10 @@ resource "aws_security_group_rule" "mysql_vpn" {
 
 #mysql to allow connections from bastion on 22, 3306
 resource "aws_security_group_rule" "mysql_bastion" {
-  count                    = length(var.mysql_vpn_bastion_ports)
+  count                    = length(var.mysql_ports)
   type                     = "ingress"
-  from_port                = var.mysql_vpn_bastion_ports[count.index]
-  to_port                  = var.mysql_vpn_bastion_ports[count.index]
+  from_port                = var.mysql_ports[count.index]
+  to_port                  = var.mysql_ports[count.index]
   protocol                 = "tcp"
   source_security_group_id = module.bastion.sg_id
   security_group_id        = module.mysql.sg_id
@@ -321,10 +321,10 @@ resource "aws_security_group_rule" "mysql_shiping" {
 
 #rabbitmq to allow connections from vpn to port 22, 5672
 resource "aws_security_group_rule" "rabbitmq_vpn" {
-  count                    = length(var.rabbitmq_vpn_bastion_ports)
+  count                    = length(var.rabbitmq_ports)
   type                     = "ingress"
-  from_port                = var.rabbitmq_vpn_bastion_ports[count.index]
-  to_port                  = var.rabbitmq_vpn_bastion_ports[count.index]
+  from_port                = var.rabbitmq_ports[count.index]
+  to_port                  = var.rabbitmq_ports[count.index]
   protocol                 = "tcp"            #ssh
   source_security_group_id = module.vpn.sg_id # connection coming from vpn
   security_group_id        = module.rabbitmq.sg_id
@@ -334,10 +334,10 @@ resource "aws_security_group_rule" "rabbitmq_vpn" {
 #rabbitmq to allow connections from bastion on port 22, 5672
 
 resource "aws_security_group_rule" "rabbitmq_bastion" {
-  count                    = length(var.rabbitmq_vpn_bastion_ports)
+  count                    = length(var.rabbitmq_ports)
   type                     = "ingress"
-  from_port                = var.rabbitmq_vpn_bastion_ports[count.index]
-  to_port                  = var.rabbitmq_vpn_bastion_ports[count.index]
+  from_port                = var.rabbitmq_ports[count.index]
+  to_port                  = var.rabbitmq_ports[count.index]
   protocol                 = "tcp"
   source_security_group_id = module.bastion.sg_id
   security_group_id        = module.rabbitmq.sg_id
@@ -514,8 +514,8 @@ resource "aws_security_group_rule" "shipping_bastion" {
   source_security_group_id = module.bastion.sg_id
   security_group_id        = module.shipping.sg_id
 }
-#shipping to allow 8080 from backend alb
 
+#shipping to allow 8080 from backend alb
 resource "aws_security_group_rule" "shipping_backend_alb" {
   type                     = "ingress"
   from_port                = 8080
@@ -620,7 +620,7 @@ resource "aws_security_group_rule" "frontend_vpn" {
   security_group_id        = module.frontend.sg_id
 }
 
-#frontend to allow 22 from bastion
+#frontend to allow 22 from bastion as we moved front end also to private subnet
 resource "aws_security_group_rule" "frontend_bastion" {
   type                     = "ingress"
   from_port                = 22
