@@ -606,8 +606,8 @@ resource "aws_security_group_rule" "backend_alb_payment" {
   from_port                = 80
   to_port                  = 80
   protocol                 = "tcp"
-  source_security_group_id = module.backend_alb.sg_id
-  security_group_id        = module.payment.sg_id
+  source_security_group_id = module.payment.sg_id
+  security_group_id        = module.backend_alb.sg_id
 }
 
 #front end to allow 22 from vpn
@@ -661,6 +661,5 @@ resource "aws_security_group_rule" "frontend_alb_https" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = module.frontend_alb.sg_id
 }
-
 
 
